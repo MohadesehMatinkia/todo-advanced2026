@@ -1,10 +1,10 @@
-# 🌌 Focus Dashboard 2026
+# 🌌 Focus Dashboard 2026!
 
-![Project Banner](https://via.placeholder.com/1200x600/030014/6366f1?text=Vision+2026+Focus+Dashboard)
+<img width="1499" height="895" alt="banner-todolist" src="https://github.com/user-attachments/assets/751f34ed-6905-42f1-842f-07779db1249b" />
 
 <div align="center">
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://YOUR_USERNAME.github.io/focus-dashboard-2026)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://MohadesehMatinkia.github.io/todo-advanced2026/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 **An immersive, futuristic productivity workspace designed for the flow state.**
@@ -51,4 +51,5 @@ focus-dashboard-2026/
 ├── styles.css       # Custom animations, scrollbars, and 3D effects
 ├── src/
 │   └── app.js       # Core logic (State, Drag&Drop, Rendering)
+
 └── README.md        # Project documentation
