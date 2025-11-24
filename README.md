@@ -3,10 +3,6 @@
 <img width="1499" height="895" alt="banner-todolist" src="https://github.com/user-attachments/assets/751f34ed-6905-42f1-842f-07779db1249b" />
 
 <div align="center">
-
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://MohadesehMatinkia.github.io/todo-advanced2026/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-
 **An immersive, futuristic productivity workspace designed for the flow state.**
 
 </div>
@@ -53,3 +49,4 @@ focus-dashboard-2026/
 │   └── app.js       # Core logic (State, Drag&Drop, Rendering)
 
 └── README.md        # Project documentation
+
