@@ -3,7 +3,7 @@
 <img width="1499" height="895" alt="banner-todolist" src="https://github.com/user-attachments/assets/751f34ed-6905-42f1-842f-07779db1249b" />
 
 <div align="center">
-**An immersive, futuristic productivity workspace designed for the flow state.**
+An immersive, futuristic productivity workspace designed for the flow state
 
 </div>
 
@@ -49,4 +49,5 @@ focus-dashboard-2026/
 │   └── app.js       # Core logic (State, Drag&Drop, Rendering)
 
 └── README.md        # Project documentation
+
 
