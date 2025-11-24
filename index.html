@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Command | Vision 2026</title>
+    
+    <!-- 1. Fonts: Plus Jakarta (English) + Vazirmatn (Persian) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            // ترکیب فونت‌ها: اول انگلیسی، اگر کاراکتر فارسی بود سراغ وزیر می‌رود
+            fontFamily: { sans: ['"Plus Jakarta Sans"', '"Vazirmatn"', 'sans-serif'] },
+            colors: {
+              void: '#030014', 
+              glass: 'rgba(255, 255, 255, 0.03)',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+        #neural-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; filter: blur(50px); /* Soft Blur for Nebula */
+        }
+    </style>
+  </head>
+  <body class="min-h-screen selection:bg-indigo-500/30 overflow-x-hidden text-slate-200 bg-void">
+    
+    <!-- Fluid Nebula Background -->
+    <canvas id="neural-canvas"></canvas>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 py-12 space-y-12">
+      <!-- Header -->
+      <header class="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div class="space-y-3 relative">
+          <div class="flex items-center gap-2">
+             <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_10px_rgba(129,140,248,0.8)] animate-pulse"></span>
+             <span class="text-[10px] font-bold tracking-[0.2em] text-indigo-300/80 uppercase">Neural Workspace</span>
+          </div>
+          <h1 class="text-6xl md:text-7xl font-extrabold tracking-tighter text-white leading-none drop-shadow-2xl">
+            Task<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Flow</span>
+          </h1>
+        </div>
+        <button id="btn-new-task" class="group relative px-8 py-4 rounded-2xl bg-white/5 border border-white/10 overflow-hidden transition-all hover:scale-105 hover:border-white/20 hover:shadow-[0_0_30px_rgba(99,102,241,0.3)]">
+             <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+             <span class="relative flex items-center gap-3 font-semibold text-white">
+               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+               Create New
+             </span>
+        </button>
+      </header>
+
+      <!-- Stats Grid -->
+      <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-8 p-8 rounded-[2rem] bg-glass border border-white/5 backdrop-blur-xl relative overflow-hidden group hover:border-white/10 transition duration-500">
+          <div class="relative z-10 flex flex-col justify-between h-full gap-6">
+             <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Overall Progress</p>
+                <h3 class="text-6xl font-bold text-white tracking-tight" data-stat="percent">0%</h3>
+             </div>
+             <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+               <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 w-0 shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all duration-1000 ease-out"></div>
+             </div>
+          </div>
+        </div>
+        <div class="md:col-span-2 p-6 rounded-[2rem] bg-glass border border-white/5 backdrop-blur-xl flex flex-col justify-center items-center gap-2 group hover:border-cyan-500/30 hover:bg-cyan-500/5 transition duration-300">
+           <div class="text-4xl font-bold text-white group-hover:text-cyan-300 transition shadow-cyan-500/50 drop-shadow-lg" data-stat="active">0</div>
+           <span class="text-xs text-slate-500 font-medium uppercase tracking-wider">Active</span>
+        </div>
+        <div class="md:col-span-2 p-6 rounded-[2rem] bg-glass border border-white/5 backdrop-blur-xl flex flex-col justify-center items-center gap-2 group hover:border-emerald-500/30 hover:bg-emerald-500/5 transition duration-300">
+           <div class="text-4xl font-bold text-white group-hover:text-emerald-300 transition shadow-emerald-500/50 drop-shadow-lg" data-stat="done">0</div>
+           <span class="text-xs text-slate-500 font-medium uppercase tracking-wider">Done</span>
+        </div>
+      </section>
+
+      <!-- Board -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start" id="board-container"></div>
+    </main>
+
+    <!-- Dialog -->
+    <dialog id="task-dialog" class="bg-transparent p-0 w-full max-w-lg open:animate-fade-in backdrop:bg-black/80 backdrop:backdrop-blur-md">
+      <div class="bg-[#090c14] border border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+        <div class="p-8 space-y-6">
+          <div class="flex justify-between items-center">
+             <h2 class="text-2xl font-bold text-white" id="dialog-title">New Task</h2>
+             <button id="btn-close-dialog" class="text-slate-500 hover:text-white transition"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+          </div>
+          <form id="task-form" class="space-y-5">
+            <input type="hidden" name="id">
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Mission Title</label>
+              <input name="title" type="text" dir="auto" required placeholder="عنوان تسک..." class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all">
+            </div>
+            <!-- ... rest of form ... -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Priority</label>
+                <div class="relative">
+                  <select name="priority" class="w-full appearance-none bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500/50 transition-all">
+                    <option value="low" class="bg-[#090c14]">Low</option>
+                    <option value="med" class="bg-[#090c14]">Medium</option>
+                    <option value="high" class="bg-[#090c14]">High</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Tag</label>
+                <input name="tags" type="text" dir="auto" placeholder="Design..." class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all">
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Checklist</label>
+              <textarea name="subtasks" rows="3" dir="auto" placeholder="- Step 1&#10;- Step 2" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all resize-none"></textarea>
+            </div>
+            <div class="pt-4 flex justify-end gap-3">
+              <button type="button" id="btn-cancel" class="px-6 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition">Discard</button>
+              <button type="submit" class="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-bold shadow-[0_10px_20px_-5px_rgba(99,102,241,0.4)] transition-all hover:-translate-y-1">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- 2. Add Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script type="module" src="./src/app.js"></script>
+    
+    <!-- Fluid Nebula Script (همان اسکریپت قبلی که دادم را اینجا بگذارید یا نگه دارید) -->
+    <script>
+      const canvas = document.getElementById('neural-canvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let mouse = { x: -100, y: -100 };
+      let orbs = [];
+      const colors = [{ r: 99, g: 102, b: 241 }, { r: 168, g: 85, b: 247 }, { r: 6, g: 182, b: 212 }, { r: 236, g: 72, b: 153 }];
+      function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+      class Orb {
+        constructor() { this.init(); }
+        init() { this.radius = Math.random() * 150 + 200; this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.color = colors[Math.floor(Math.random() * colors.length)]; this.alpha = Math.random() * 0.5 + 0.1; this.targetAlpha = this.alpha; }
+        draw() { const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius); gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`); gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); }
+        update() { this.x += this.vx; this.y += this.vy; if (this.x < -this.radius || this.x > width + this.radius) this.vx *= -1; if (this.y < -this.radius || this.y > height + this.radius) this.vy *= -1; const dx = mouse.x - this.x; const dy = mouse.y - this.y; const dist = Math.sqrt(dx * dx + dy * dy); if (dist < 400) { this.targetAlpha = 0.8; this.x += dx * 0.005; this.y += dy * 0.005; } else { this.targetAlpha = Math.random() * 0.3 + 0.1; } this.alpha += (this.targetAlpha - this.alpha) * 0.02; this.draw(); }
+      }
+      function initWorld() { resize(); orbs = []; for (let i = 0; i < 8; i++) orbs.push(new Orb()); }
+      function animate() { ctx.clearRect(0, 0, width, height); ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#030014'; ctx.fillRect(0, 0, width, height); orbs.forEach(orb => orb.update()); requestAnimationFrame(animate); }
+      window.addEventListener('resize', initWorld);
+      window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+      initWorld(); animate();
+    </script>
+  </body>
+</html>
